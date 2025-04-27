@@ -19,4 +19,9 @@ public class MQTTPubSubServiceImpl implements MQTTPubSubService {
         mqttConfig.connectToIoT();
         mqttConfig.publish(smartClassroomPayload);
     }
+
+    public void subscribeToTopic() throws AWSIotException {
+        mqttConfig.connectToIoT();
+        mqttConfig.subscribe();
+    }
 }

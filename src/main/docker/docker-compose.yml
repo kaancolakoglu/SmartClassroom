@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: smart-classroom-app
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/smart-classroom
+      - SPRING_DATASOURCE_USERNAME=smart-classroom
+      - SPRING_DATASOURCE_PASSWORD=smart-classroom
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: smart-classroom-db
+    environment:
+      - POSTGRES_USER=smart-classroom
+      - POSTGRES_PASSWORD=smart-classroom
+      - POSTGRES_DB=smart-classroom
+    ports:
+      - "5433:5432"
