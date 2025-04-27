@@ -22,6 +22,6 @@ public class BuildingBlock {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "buildingBlock")
+    @OneToMany(mappedBy = "buildingBlock",fetch = FetchType.EAGER)
     private Set<Classroom> classrooms = new HashSet<>();
 }

@@ -7,4 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MQTTPubSubService {
 
     public void publishMessage(@RequestBody SmartClassroomPayload smartClassroomPayload) throws AWSIotException;
+
+    public void subscribeToTopic() throws AWSIotException;
 }
