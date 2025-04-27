@@ -28,6 +28,6 @@ public class Classroom {
 
     @ManyToOne
     @JoinColumn(name = "buildingBlockId")
-    private BuildingBlock buildingBlock;
+    private Building building;
 
 }
