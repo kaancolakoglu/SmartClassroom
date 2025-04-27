@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Builder
 @Table(name = "buildingBlock")
-public class BuildingBlock {
+public class Building {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +22,6 @@ public class BuildingBlock {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "buildingBlock",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "building",fetch = FetchType.EAGER)
     private Set<Classroom> classrooms = new HashSet<>();
 }
