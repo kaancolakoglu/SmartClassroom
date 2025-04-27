@@ -2,6 +2,7 @@ package com.smartclassroom.occupancysystem.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -18,11 +19,11 @@ public class Classroom {
 
     @NotBlank
     private String classroomName;
-    @NotBlank
+    @NotNull
     private Integer floorNumber;
-    @NotBlank
+    @NotNull
     private Integer occupancy;
-    @NotBlank
+    @NotNull
     private Integer classroomCapacity;
 
     @ManyToOne

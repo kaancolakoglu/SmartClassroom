@@ -3,6 +3,7 @@ package com.smartclassroom.occupancysystem.controllers;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.smartclassroom.occupancysystem.models.SmartClassroomPayload;
 import com.smartclassroom.occupancysystem.services.MQTTPubSubService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,5 +20,10 @@ public class MQTTController {
     public String publishMessage(@RequestBody SmartClassroomPayload smartClassroomPayload) throws AWSIotException {
         mqttPubSubService.publishMessage(smartClassroomPayload);
         return "Message published successfully";
+    }
+    @GetMapping("/subscribe")
+    public String subscribeMessage() throws AWSIotException {
+        mqttPubSubService.subscribeToTopic();
+        return "Message subscribed successfully";
     }
 }
