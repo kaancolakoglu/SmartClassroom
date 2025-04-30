@@ -5,6 +5,8 @@ services:
     image: 'docker-spring-boot-postgres:latest'
     build:
       context: .
+      args:
+        - SPRING_PROFILE=local
     container_name: smart-classroom-app
     depends_on:
       - db
@@ -13,6 +15,12 @@ services:
       - SPRING_DATASOURCE_USERNAME=smart-classroom
       - SPRING_DATASOURCE_PASSWORD=smart-classroom
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=local
+      # AWS IoT Core environment variables
+      - AWS_IOT_ENDPOINT=${AWS_IOT_ENDPOINT}
+      - AWS_IOT_CLIENT_ID=${AWS_IOT_CLIENT_ID}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
   db:
     image: 'postgres:13.1-alpine'
