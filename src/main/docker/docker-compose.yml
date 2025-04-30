@@ -31,3 +31,11 @@ services:
       - POSTGRES_DB=smart-classroom
     ports:
       - "5433:5432"
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=iot,dynamodb,s3
+      - DEBUG=1
