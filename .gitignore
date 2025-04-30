@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Scripts ###
+/src/main/java/scripts/start-local.sh
+/src/main/java/scripts/setenv.sh
