@@ -35,3 +35,4 @@ build/
 ### Scripts ###
 /src/main/java/scripts/start-local.sh
 /src/main/java/scripts/setenv.sh
+/prod.env
