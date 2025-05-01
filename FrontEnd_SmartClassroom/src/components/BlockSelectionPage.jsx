@@ -1,8 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BlockSelectionPage.css';
 
 const BlockSelectionPage = ({ onBlockSelect }) => {
-  const [blocks] = useState(['A', 'B', 'C', 'H', 'I']); // Test için daha fazla blok ekledim
+  const [blocks, setBlocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const API_BASE_URL = 'http://localhost:8080';
+
+  useEffect(() => {
+    const fetchBlocks = async () => {
+      try {
+        // Blokları API'den çek
+        const response = await fetch(`${API_BASE_URL}/buildings`);
+        if (!response.ok) {
+          throw new Error('Blok verileri çekilemedi');
+        }
+        const data = await response.json();
+        // Blok verilerini al (id ve name)
+        setBlocks(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Blok verisi çekme hatası:', error);
+        setError('Blok verileri yüklenemedi. Lütfen daha sonra tekrar deneyin.');
+        setLoading(false);
+        // Hata durumunda varsayılan blokları göster
+        setBlocks([
+          { id: 1, name: 'A' },
+          { id: 2, name: 'B' },
+          { id: 3, name: 'C' },
+          { id: 4, name: 'G' },
+          { id: 5, name: 'H' },
+          { id: 6, name: 'I' }
+        ]);
+      }
+    };
+
+    fetchBlocks();
+  }, []);
 
   const blockColors = {
     'A': {
@@ -30,6 +65,19 @@ const BlockSelectionPage = ({ onBlockSelect }) => {
       hover: 'hover:from-rose-300 hover:to-red-300',
       border: 'border-rose-300'
     }
+    // Diğer bloklar için renkler eklenebilir
+  };
+
+  // Varsayılan renk
+  const defaultColor = {
+    bg: 'from-gray-200 to-gray-300',
+    hover: 'hover:from-gray-300 hover:to-gray-400',
+    border: 'border-gray-300'
+  };
+
+  // Blok için renk döndür, yoksa varsayılan rengi kullan
+  const getBlockColor = (block) => {
+    return blockColors[block] || defaultColor;
   };
 
   return (
@@ -48,27 +96,40 @@ const BlockSelectionPage = ({ onBlockSelect }) => {
         <h2 className="text-2xl font-bold text-gray-700 text-shadow">Select Block</h2>
       </div>
       
-      <div className="grid grid-cols-2 gap-8 w-full max-w-5xl px-4 mx-auto">
-        {blocks.map((block) => (
-          <button
-            key={block}
-            onClick={() => onBlockSelect(block)}
-            className={`
-              relative overflow-hidden
-              py-8 rounded-2xl
-              text-3xl font-bold text-gray-700
-              bg-gradient-to-r ${blockColors[block].bg}
-              ${blockColors[block].hover}
-              transform hover:scale-105
-              transition-all duration-300 ease-in-out
-              shadow-lg hover:shadow-2xl
-              border-2 ${blockColors[block].border}
-            `}
-          >
-            <span className="relative z-10">BLOCK {block}</span>
-          </button>
-        ))}
-      </div>
+      {loading ? (
+        <div className="w-full text-center">
+          <p className="text-xl">Yükleniyor...</p>
+        </div>
+      ) : error ? (
+        <div className="w-full text-center">
+          <p className="text-xl text-red-500">{error}</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-8 w-full max-w-5xl px-4 mx-auto">
+          {blocks.map((block) => {
+            const blockColor = getBlockColor(block.name);
+            return (
+              <button
+                key={block.id}
+                onClick={() => onBlockSelect(block.id, block.name)}
+                className={`
+                  relative overflow-hidden
+                  py-8 rounded-2xl
+                  text-3xl font-bold text-gray-700
+                  bg-gradient-to-r ${blockColor.bg}
+                  ${blockColor.hover}
+                  transform hover:scale-105
+                  transition-all duration-300 ease-in-out
+                  shadow-lg hover:shadow-2xl
+                  border-2 ${blockColor.border}
+                `}
+              >
+                <span className="relative z-10">BLOCK {block.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
