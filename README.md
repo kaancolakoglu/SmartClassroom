@@ -24,7 +24,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 - **Backend**: Java Spring for server-side operations
 - **AWS Services**:
   - **AWS IoT Core**: For managing and communicating with IoT devices
-  - **DynamoDB**: For storing and managing occupancy data
+  - **PostgresSQL**: For storing and managing occupancy data
   - **Lambda**: For serverless computing functions
   - **API Gateway**: For creating and managing APIs
 
@@ -34,7 +34,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 │  ESP32 with   │       │                  │       │  React.js Web   │
 │ LD2410 Sensor ├──────►│  AWS IoT Core    ├──────►│    Dashboard    │
 └───────────────┘       │                  │       └─────────────────┘
-                        │  AWS DynamoDB    │
+                        │  PosrgresSQL     │
 ┌───────────────┐       │                  │       ┌─────────────────┐
 │   ESP32 Cam   ├──────►│  Java Spring     ├──────►│ Admin Interface │
 └───────────────┘       │  AWS Lambda      │       └─────────────────┘
@@ -43,7 +43,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 
 ## Installation & Setup
 ### Prerequisites
-- Java JDK 17 or higher
+- Java JDK 21 or higher
 - Node.js and npm
 - AWS account with appropriate permissions
 - ESP32 development environment (Arduino IDE or PlatformIO)
