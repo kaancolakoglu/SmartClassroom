@@ -8,36 +8,84 @@ function App() {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [selectedFloor, setSelectedFloor] = useState(0);
   const [roomData, setRoomData] = useState(null);
+  const [totalCapacity, setTotalCapacity] = useState(0);
+  const [availableFloors, setAvailableFloors] = useState([]);
+
+  const API_BASE_URL = 'http://localhost:8080';
 
   // Blok seçildiğinde çağrılacak fonksiyon
-  const handleBlockSelect = async (block) => {
-    setSelectedBlock(block);
-    // Örnek veri kullanarak test edelim
-    const mockData = {
-      floors: [0, 1, 2],
-      rooms: [
-        { id: 1, name: "101", current: 15, capacity: 30 },
-        { id: 2, name: "102", current: 20, capacity: 30 },
-        { id: 3, name: "103", current: 10, capacity: 30 }
-      ]
-    };
-    setRoomData(mockData);
+  const handleBlockSelect = async (blockId, blockName) => {
+    setSelectedBlock({id: blockId, name: blockName});
+    try {
+      // Blok ID'sini kullanarak API'den sınıfları çek
+      const response = await fetch(`${API_BASE_URL}/classrooms/building/${blockId}`);
+      if (!response.ok) {
+        throw new Error('Veri çekilemedi');
+      }
+      const data = await response.json();
+      
+      // Mevcut katları belirle
+      const floors = [...new Set(data.map(room => room.floorNumber))].sort();
+      setAvailableFloors(floors);
+      
+      // İlk katı seç
+      const firstFloor = floors.length > 0 ? floors[0] : 0;
+      setSelectedFloor(firstFloor);
+      
+      // Seçilen kata ait odaları filtrele
+      const roomsForFloor = data.filter(room => room.floorNumber === firstFloor);
+      
+      // Toplam kapasiteyi hesapla
+      const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
+      setTotalCapacity(totalCap);
+      
+      // Oda verilerini ayarla
+      setRoomData({
+        floors: floors,
+        rooms: roomsForFloor.map(room => ({
+          id: room.id,
+          name: room.classroomName,
+          current: room.occupancy,
+          capacity: room.classroomCapacity
+        }))
+      });
+    } catch (error) {
+      console.error('Veri çekme hatası:', error);
+      // Hata durumunda kullanıcıya bilgi verilebilir
+    }
   };
 
   // Kat değiştiğinde çağrılacak fonksiyon
   const handleFloorChange = async (floor) => {
     setSelectedFloor(floor);
     if (selectedBlock) {
-      // Örnek veri kullanarak test edelim
-      const mockData = {
-        floors: [0, 1, 2],
-        rooms: [
-          { id: 1, name: `${floor}01`, current: 15, capacity: 30 },
-          { id: 2, name: `${floor}02`, current: 20, capacity: 30 },
-          { id: 3, name: `${floor}03`, current: 10, capacity: 30 }
-        ]
-      };
-      setRoomData(mockData);
+      try {
+        const response = await fetch(`${API_BASE_URL}/classrooms/building/${selectedBlock.id}`);
+        if (!response.ok) {
+          throw new Error('ERROR');
+        }
+        const data = await response.json();
+        
+        // Seçilen kata ait odaları filtrele
+        const roomsForFloor = data.filter(room => room.floorNumber === floor);
+        
+        // Toplam kapasiteyi hesapla
+        const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
+        setTotalCapacity(totalCap);
+        
+        // Oda verilerini ayarla
+        setRoomData({
+          floors: availableFloors,
+          rooms: roomsForFloor.map(room => ({
+            id: room.id,
+            name: room.classroomName,
+            current: room.occupancy,
+            capacity: room.classroomCapacity
+          }))
+        });
+      } catch (error) {
+        console.error('Veri çekme hatası:', error);
+      }
     }
   };
 
@@ -46,6 +94,8 @@ function App() {
     setSelectedBlock(null);
     setSelectedFloor(0);
     setRoomData(null);
+    setTotalCapacity(0);
+    setAvailableFloors([]);
   };
 
   return (
@@ -61,9 +111,9 @@ function App() {
             >
               ← Back
             </button>
-            <BlockHeader block={selectedBlock} floor={selectedFloor} />
+            <BlockHeader block={selectedBlock.name} floor={selectedFloor} totalCapacity={totalCapacity} />
             <FloorSelector 
-              floors={roomData?.floors || []}
+              floors={availableFloors}
               selectedFloor={selectedFloor}
               onFloorSelect={handleFloorChange}
             />
