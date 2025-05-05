@@ -159,7 +159,7 @@ jobs:
       - name: Get available solution stacks
         id: get-stacks
         run: |
-        # Get a specific Corretto 21 stack
+          # Get a specific Corretto 21 stack
           STACK=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Corretto 21') && !contains(@, 'Tomcat')]" --output text | head -1)
           echo "Found Corretto 21 stack: $STACK"
           echo "SOLUTION_STACK=$(echo $STACK)" >> $GITHUB_ENV
