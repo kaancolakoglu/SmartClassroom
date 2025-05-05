@@ -113,6 +113,9 @@ jobs:
           aws elasticbeanstalk describe-environments --application-name smart-classroom --environment-names production || \
           aws elasticbeanstalk create-environment --application-name smart-classroom --environment-name production --solution-stack-name "${{ env.SOLUTION_STACK || '64bit Amazon Linux 2023 v4.1.1 running Corretto 21' }}" --option-settings file://eb-options.json
 
+      - name: Wait for Elastic Beanstalk resources to be ready
+        run: sleep 30
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
