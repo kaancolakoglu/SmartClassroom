@@ -22,6 +22,9 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: Verify JAR file exists
+        run: ls -la target/
+
       - name: Run tests
         run: mvn test -Dspring.profiles.active=prod
         env:
@@ -46,10 +49,70 @@ jobs:
           ECR_REPOSITORY: smart-classroom-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --build-arg SPRING_PROFILE=prod -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          aws ecr describe-repositories --repository-names smart-classroom-app || \
+          aws ecr create-repository --repository-name smart-classroom-app
+          docker build --build-arg SPRING_PROFILE=prod -f src/main/docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Option 1: If deploying to Elastic Beanstalk
+      - name: Create EB options file
+        run: |
+          cat > eb-options.json << 'EOF'
+          [
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "SPRING_PROFILES_ACTIVE",
+              "Value": "prod"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "PROD_DB_URL",
+              "Value": "${{ secrets.PROD_DB_URL }}"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "PROD_DB_USERNAME",
+              "Value": "${{ secrets.PROD_DB_USERNAME }}"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "PROD_DB_PASSWORD",
+              "Value": "${{ secrets.PROD_DB_PASSWORD }}"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "AWS_ACCESS_KEY_ID",
+              "Value": "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "AWS_SECRET_ACCESS_KEY",
+              "Value": "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            },
+            {
+              "Namespace": "aws:elasticbeanstalk:application:environment",
+              "OptionName": "AWS_REGION",
+              "Value": "${{ secrets.AWS_REGION }}"
+            }
+          ]
+          EOF
+
+      - name: Check if Elastic Beanstalk application exists or create it
+        run: |
+          aws elasticbeanstalk describe-applications --application-names smart-classroom || \
+          aws elasticbeanstalk create-application --application-name smart-classroom --description "Smart Classroom Occupancy System"
+
+      - name: Get available solution stacks
+        id: get-stacks
+        run: |
+          STACKS=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Corretto') && contains(@, '21')]" --output text | head -1)
+          echo "Available Corretto 21 stack: $STACKS"
+          echo "SOLUTION_STACK=$STACKS" >> $GITHUB_ENV
+
+      - name: Check if Elastic Beanstalk environment exists or create it
+        run: |
+          aws elasticbeanstalk describe-environments --application-name smart-classroom --environment-names production || \
+          aws elasticbeanstalk create-environment --application-name smart-classroom --environment-name production --solution-stack-name "${{ env.SOLUTION_STACK || '64bit Amazon Linux 2023 v4.1.1 running Corretto 21' }}" --option-settings file://eb-options.json
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -60,12 +123,3 @@ jobs:
           version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
           deployment_package: target/smart-classroom-occupancy-system.jar
-
-    # Option 2: If deploying to ECS (Uncomment if needed)
-    # - name: Deploy to Amazon ECS
-    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-    #   with:
-    #     task-definition: task-definition.json
-    #     service: smart-classroom-service
-    #     cluster: smart-classroom-cluster
-    #     wait-for-service-stability: true
