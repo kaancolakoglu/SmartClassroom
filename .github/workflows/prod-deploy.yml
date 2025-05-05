@@ -51,6 +51,16 @@ jobs:
           docker build --build-arg SPRING_PROFILE=prod -f src/main/docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Check if Elastic Beanstalk application exists or create it
+        run: |
+          aws elasticbeanstalk describe-applications --application-names smart-classroom || \
+          aws elasticbeanstalk create-application --application-name smart-classroom --description "Smart Classroom Occupancy System"
+
+      - name: Check if Elastic Beanstalk environment exists or create it
+        run: |
+          aws elasticbeanstalk describe-environments --application-name smart-classroom --environment-names production || \
+          aws elasticbeanstalk create-environment --application-name smart-classroom --environment-name production --solution-stack-name "64bit Amazon Linux 2 v3.6.0 running Corretto 17" --option-settings file://eb-options.json
+
       # Option 1: If deploying to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
