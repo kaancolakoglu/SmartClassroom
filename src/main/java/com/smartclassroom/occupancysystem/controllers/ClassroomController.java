@@ -28,7 +28,7 @@ public class ClassroomController {
     }
 
     @GetMapping("/classrooms/building/{buildingName}")
-    public ResponseEntity<List<ClassroomSummaryDTO>> getClassroomsByBuildingName(@PathVariable String buildingName) {
+    public ResponseEntity<List<ClassroomSummaryDTO>> getClassroomsByBuildingName(@PathVariable("buildingName") String buildingName) {
         return classroomService.getClassroomsByBuildingName(buildingName)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
