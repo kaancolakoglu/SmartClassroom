@@ -159,9 +159,10 @@ jobs:
       - name: Get available solution stacks
         id: get-stacks
         run: |
-          STACKS=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Corretto') && contains(@, '21')]" --output text | head -1)
-          echo "Available Corretto 21 stack: $STACKS"
-          echo "SOLUTION_STACK=$STACKS" >> $GITHUB_ENV
+        # Get a specific Corretto 21 stack
+          STACK=$(aws elasticbeanstalk list-available-solution-stacks --query "SolutionStacks[?contains(@, 'Corretto 21') && !contains(@, 'Tomcat')]" --output text | head -1)
+          echo "Found Corretto 21 stack: $STACK"
+          echo "SOLUTION_STACK=$(echo $STACK)" >> $GITHUB_ENV
 
       - name: Create new Elastic Beanstalk environment
         run: |
@@ -171,13 +172,15 @@ jobs:
             --environment-names production-new \
             --query "Environments[?Status!='Terminated'].EnvironmentName" \
             --output text || echo "")
-          
+      
           if [ -z "$ACTIVE_ENV" ]; then
             echo "Creating new environment 'production-new'..."
+            echo "Using solution stack: ${{ env.SOLUTION_STACK }}"
+      
             aws elasticbeanstalk create-environment \
               --application-name smart-classroom \
               --environment-name production-new \
-              --solution-stack-name "${{ env.SOLUTION_STACK || '64bit Amazon Linux 2023 v4.5.1 running Corretto 21' }}" \
+              --solution-stack-name "${{ env.SOLUTION_STACK }}" \
               --option-settings file://eb-options.json
           
             # Wait for environment to be created (up to 3 minutes)
