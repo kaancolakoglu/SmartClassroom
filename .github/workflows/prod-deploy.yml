@@ -46,6 +46,8 @@ jobs:
           ECR_REPOSITORY: smart-classroom-app
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          aws ecr describe-repositories --repository-names smart-classroom-app || \
+          aws ecr create-repository --repository-name smart-classroom-app
           docker build --build-arg SPRING_PROFILE=prod -f src/main/docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
