@@ -1,0 +1,1 @@
+web: java -jar target/smart-classroom-occupancy-system.jar

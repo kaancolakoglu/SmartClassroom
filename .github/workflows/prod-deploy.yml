@@ -205,6 +205,10 @@ jobs:
       - name: Set unique version label
         run: echo "VERSION_LABEL=${{ github.sha }}-$(date +%s)" >> $GITHUB_ENV
 
+      - name: Create Procfile
+        run: |
+          echo "web: java -jar target/occupancy-system-0.0.1-SNAPSHOT.jar" > Procfile
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -214,5 +218,5 @@ jobs:
           environment_name: production-new
           version_label: ${{ env.VERSION_LABEL }}
           region: ${{ secrets.AWS_REGION }}
-          deployment_package: target/smart-classroom-occupancy-system.jar
+          deployment_package: .
           use_existing_version_if_available: false
