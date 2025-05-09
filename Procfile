@@ -1,0 +1,1 @@
+web: java -jar smart-classroom-occupancy-system.jar --spring.pid.file=/var/pids/web.pid
