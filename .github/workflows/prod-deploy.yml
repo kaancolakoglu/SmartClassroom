@@ -48,6 +48,7 @@ jobs:
             --capabilities CAPABILITY_IAM \
             --no-fail-on-empty-changeset \
             --parameter-overrides \
+              SolutionStackName="64bit Amazon Linux 2023 v4.2.0 running Corretto 21" \
               ProdDbUrl="${{ secrets.PROD_DB_URL }}" \
               ProdDbUsername="${{ secrets.PROD_DB_USERNAME }}" \
               ProdDbPassword="${{ secrets.PROD_DB_PASSWORD }}" \

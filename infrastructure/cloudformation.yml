@@ -4,8 +4,7 @@ Description: 'Infrastructure for Smart Classroom Application'
 Parameters:
   SolutionStackName:
     Type: String
-    Default: '64bit Amazon Linux 2023 v4.1.1 running Corretto 21'
-    Description: The Elastic Beanstalk solution stack name
+    Description: The Elastic Beanstalk solution stack name (e.g., '64bit Amazon Linux 2023 v4.2.0 running Corretto 21')
   
   # Database connection parameters
   ProdDbUrl:
