@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Infrastructure for Smart Classroom Application'
+
+Parameters:
+  SolutionStackName:
+    Type: String
+    Default: '64bit Amazon Linux 2023 v4.1.1 running Corretto 21'
+    Description: The Elastic Beanstalk solution stack name
+  
+  # Database connection parameters
+  ProdDbUrl:
+    Type: String
+    Description: Production database URL
+    NoEcho: true
+  
+  ProdDbUsername:
+    Type: String
+    Description: Production database username
+    NoEcho: true
+  
+  ProdDbPassword:
+    Type: String
+    Description: Production database password
+    NoEcho: true
+  
+  AwsRegion:
+    Type: String
+    Description: AWS Region
+    Default: us-east-1
+
+Resources:
+  # ECR Repository
+  SmartClassroomECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: smart-classroom-app
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep only the last 10 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 10
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+
+  # Elastic Beanstalk Application
+  SmartClassroomApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: smart-classroom
+      Description: Smart Classroom Occupancy System
+
+  # Elastic Beanstalk Environment
+  ProductionEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref SmartClassroomApplication
+      EnvironmentName: production
+      SolutionStackName: !Ref SolutionStackName
+      OptionSettings:
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SPRING_PROFILES_ACTIVE
+          Value: prod
+        
+        # Use the parameters directly
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: PROD_DB_URL
+          Value: !Ref ProdDbUrl
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: PROD_DB_USERNAME
+          Value: !Ref ProdDbUsername
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: PROD_DB_PASSWORD
+          Value: !Ref ProdDbPassword
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AwsRegion
+
+        # Additional recommended EB settings
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref InstanceProfile
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: ServiceRole
+          Value: !Ref ServiceRole
+
+  # IAM Role for EC2 instances
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonECR-FullAccess
+
+  # Instance Profile for EC2 instances
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref InstanceRole
+
+  # Service Role for Elastic Beanstalk
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: elasticbeanstalk.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth
+        - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService
+
+Outputs:
+  ECRRepositoryURI:
+    Description: URI of the ECR Repository
+    Value: !GetAtt SmartClassroomECRRepository.RepositoryUri
+  
+  ElasticBeanstalkURL:
+    Description: URL of the Elastic Beanstalk Environment
+    Value: !GetAtt ProductionEnvironment.EndpointURL
