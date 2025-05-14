@@ -104,6 +104,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: AWS_REGION
           Value: !Ref AwsRegion
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_IOT_ENDPOINT
+          Value: !Ref AwsIotEndpoint
 
         # Additional recommended EB settings
         - Namespace: aws:autoscaling:launchconfiguration
