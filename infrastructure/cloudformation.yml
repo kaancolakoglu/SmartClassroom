@@ -28,6 +28,25 @@ Parameters:
     Default: us-east-1
 
 Resources:
+  # Explicit security group for Elastic Beanstalk instances
+  EBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Smart Classroom EB instances
+      GroupName: smart-classroom-eb-sg
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
   # ECR Repository
   SmartClassroomECRRepository:
     Type: AWS::ECR::Repository
@@ -72,6 +91,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SPRING_PROFILES_ACTIVE
           Value: prod
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !Ref EBSecurityGroup
         
         # Use the parameters directly
         - Namespace: aws:elasticbeanstalk:application:environment
@@ -133,6 +155,12 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService
 
 Outputs:
+  EBSecurityGroupId:
+    Description: Security Group ID for Elastic Beanstalk instances
+    Value: !Ref EBSecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-EBSecurityGroup"
+
   ECRRepositoryURI:
     Description: URI of the ECR Repository
     Value: !GetAtt SmartClassroomECRRepository.RepositoryUri
