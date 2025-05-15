@@ -37,7 +37,7 @@ Smart Classroom is a solution designed to help students find available empty cla
                         │  AWS RDS         │
 ┌───────────────┐       │                  │       ┌─────────────────┐
 │   ESP32 Cam   ├──────►│  Java Spring     ├──────►│ Admin Interface │
-└───────────────┘       │  AWS Lambda      │       └─────────────────┘
+└───────────────┘       │                  │       └─────────────────┘
                         └──────────────────┘
 ```
 
