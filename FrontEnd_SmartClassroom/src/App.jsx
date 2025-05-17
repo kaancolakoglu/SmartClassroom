@@ -22,7 +22,7 @@ function App() {
 
     try {
       // Fetch classrooms for the selected block using the API service
-      const data = await ApiService.getClassroomsByBuildingId(blockId);
+      const data = await ApiService.getClassroomsByBuildingId(blockName);
 
       // Extract available floors
       const floors = [...new Set(data.map(room => room.floorNumber))].sort();
@@ -65,7 +65,7 @@ function App() {
       setError(null);
 
       try {
-        const data = await ApiService.getClassroomsByBuildingId(selectedBlock.id);
+        const data = await ApiService.getClassroomsByBuildingId(selectedBlock.name);
 
         // Filter rooms for the selected floor
         const roomsForFloor = data.filter(room => room.floorNumber === floor);

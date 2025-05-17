@@ -1,12 +1,12 @@
 // src/services/apiConfig.js
 
 // Use the Elastic Beanstalk URL for all API calls
-const API_BASE_URL = 'https://production.eba-nhxxj3xh.us-east-1.elasticbeanstalk.com';
+const API_BASE_URL = 'http://production.eba-nhxxj3xh.us-east-1.elasticbeanstalk.com';
 
 // API endpoints
 const ENDPOINTS = {
     ALL_BUILDINGS: '/api/v1/buildings/all',
-    CLASSROOMS_BY_BUILDING: (buildingId) => `/api/v1/classrooms/building/${buildingId}`,
+    CLASSROOMS_BY_BUILDING: (building) => `/api/v1/classrooms/building/${building.name || building}`,
 };
 
 // API service functions
