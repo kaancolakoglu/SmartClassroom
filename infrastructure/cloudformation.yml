@@ -73,11 +73,11 @@ Resources:
             "rules": [
               {
                 "rulePriority": 1,
-                "description": "Keep only the last 10 images",
+                "description": "Keep only the last 3 images",
                 "selection": {
                   "tagStatus": "any",
                   "countType": "imageCountMoreThan",
-                  "countNumber": 10
+                  "countNumber": 3
                 },
                 "action": {
                   "type": "expire"
@@ -141,6 +141,12 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: ServiceRole
           Value: !Ref ServiceRole
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t2.micro
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: SingleInstance
 
   # IAM Role for EC2 instances
   InstanceRole:
