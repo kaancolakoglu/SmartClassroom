@@ -27,6 +27,10 @@ Parameters:
     Description: AWS Region
     Default: us-east-1
 
+  AwsIotEndpoint:
+    Type: String
+    Description: AWS IoT Core endpoint
+
 Resources:
   # Explicit security group for Elastic Beanstalk instances
   EBSecurityGroup:
