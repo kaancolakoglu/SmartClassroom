@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import BlockSelectionPage from './components/BlockSelectionPage';
 import BlockHeader from './components/BlockHeader';
 import FloorSelector from './components/FloorSelector';
@@ -11,14 +11,13 @@ function App() {
   const [totalCapacity, setTotalCapacity] = useState(0);
   const [availableFloors, setAvailableFloors] = useState([]);
 
-  const API_BASE_URL = 'http://localhost:8080';
-
+  const API_BASE_URL = 'https://production.eba-nhxxj3xh.us-east-1.elasticbeanstalk.com';
   // Blok seçildiğinde çağrılacak fonksiyon
   const handleBlockSelect = async (blockId, blockName) => {
     setSelectedBlock({id: blockId, name: blockName});
     try {
       // Blok ID'sini kullanarak API'den sınıfları çek
-      const response = await fetch(`${API_BASE_URL}/classrooms/building/${blockId}`);
+      const response = await fetch(`${API_BASE_URL}/api/v1/classrooms/building/${blockId}`);
       if (!response.ok) {
         throw new Error('Veri çekilemedi');
       }
@@ -60,7 +59,7 @@ function App() {
     setSelectedFloor(floor);
     if (selectedBlock) {
       try {
-        const response = await fetch(`${API_BASE_URL}/classrooms/building/${selectedBlock.id}`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/classrooms/building/${selectedBlock.id}`);
         if (!response.ok) {
           throw new Error('ERROR');
         }
