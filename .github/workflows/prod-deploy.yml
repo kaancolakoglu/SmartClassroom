@@ -52,7 +52,8 @@ jobs:
               ProdDbUrl="${{ secrets.PROD_DB_URL }}" \
               ProdDbUsername="${{ secrets.PROD_DB_USERNAME }}" \
               ProdDbPassword="${{ secrets.PROD_DB_PASSWORD }}" \
-              AwsRegion="${{ secrets.AWS_REGION }}"
+              AwsRegion="${{ secrets.AWS_REGION }}" \
+              AwsIotEndpoint="${{ secrets.AWS_IOT_ENDPOINT }}"
 
       # Get outputs from CloudFormation stack
       - name: Get CloudFormation outputs
