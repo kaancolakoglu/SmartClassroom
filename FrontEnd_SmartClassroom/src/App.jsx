@@ -3,6 +3,7 @@ import BlockSelectionPage from './components/BlockSelectionPage';
 import BlockHeader from './components/BlockHeader';
 import FloorSelector from './components/FloorSelector';
 import RoomGrid from './components/RoomGrid';
+import ApiService from './services/apiConfig';
 
 function App() {
   const [selectedBlock, setSelectedBlock] = useState(null);
@@ -10,35 +11,35 @@ function App() {
   const [roomData, setRoomData] = useState(null);
   const [totalCapacity, setTotalCapacity] = useState(0);
   const [availableFloors, setAvailableFloors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const API_BASE_URL = 'https://production.eba-nhxxj3xh.us-east-1.elasticbeanstalk.com';
-  // Blok seçildiğinde çağrılacak fonksiyon
+  // Block selection handler
   const handleBlockSelect = async (blockId, blockName) => {
+    setLoading(true);
+    setError(null);
     setSelectedBlock({id: blockId, name: blockName});
+
     try {
-      // Blok ID'sini kullanarak API'den sınıfları çek
-      const response = await fetch(`${API_BASE_URL}/api/v1/classrooms/building/${blockId}`);
-      if (!response.ok) {
-        throw new Error('Veri çekilemedi');
-      }
-      const data = await response.json();
-      
-      // Mevcut katları belirle
+      // Fetch classrooms for the selected block using the API service
+      const data = await ApiService.getClassroomsByBuildingId(blockId);
+
+      // Extract available floors
       const floors = [...new Set(data.map(room => room.floorNumber))].sort();
       setAvailableFloors(floors);
-      
-      // İlk katı seç
+
+      // Select first floor
       const firstFloor = floors.length > 0 ? floors[0] : 0;
       setSelectedFloor(firstFloor);
-      
-      // Seçilen kata ait odaları filtrele
+
+      // Filter rooms for the selected floor
       const roomsForFloor = data.filter(room => room.floorNumber === firstFloor);
-      
-      // Toplam kapasiteyi hesapla
+
+      // Calculate total capacity
       const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
       setTotalCapacity(totalCap);
-      
-      // Oda verilerini ayarla
+
+      // Set room data
       setRoomData({
         floors: floors,
         rooms: roomsForFloor.map(room => ({
@@ -49,30 +50,31 @@ function App() {
         }))
       });
     } catch (error) {
-      console.error('Veri çekme hatası:', error);
-      // Hata durumunda kullanıcıya bilgi verilebilir
+      console.error('Error fetching data:', error);
+      setError('Failed to load classroom data. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Kat değiştiğinde çağrılacak fonksiyon
+  // Floor change handler
   const handleFloorChange = async (floor) => {
     setSelectedFloor(floor);
     if (selectedBlock) {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/classrooms/building/${selectedBlock.id}`);
-        if (!response.ok) {
-          throw new Error('ERROR');
-        }
-        const data = await response.json();
-        
-        // Seçilen kata ait odaları filtrele
+        const data = await ApiService.getClassroomsByBuildingId(selectedBlock.id);
+
+        // Filter rooms for the selected floor
         const roomsForFloor = data.filter(room => room.floorNumber === floor);
-        
-        // Toplam kapasiteyi hesapla
+
+        // Calculate total capacity
         const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
         setTotalCapacity(totalCap);
-        
-        // Oda verilerini ayarla
+
+        // Set room data
         setRoomData({
           floors: availableFloors,
           rooms: roomsForFloor.map(room => ({
@@ -83,44 +85,61 @@ function App() {
           }))
         });
       } catch (error) {
-        console.error('Veri çekme hatası:', error);
+        console.error('Error fetching data:', error);
+        setError('Failed to load classroom data. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  // Geri dönüş butonu için fonksiyon
+  // Back button handler
   const handleBack = () => {
     setSelectedBlock(null);
     setSelectedFloor(0);
     setRoomData(null);
     setTotalCapacity(0);
     setAvailableFloors([]);
+    setError(null);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-100 to-blue-100">
-      {!selectedBlock ? (
-        <BlockSelectionPage onBlockSelect={handleBlockSelect} />
-      ) : (
-        <div className="container mx-auto px-4 py-4">
-          <div className="sticky top-0 p-4 mb-8 z-10">
-            <button
-              onClick={handleBack}
-              className="absolute left-4 top-4 px-4 py-2 rounded-full border-2 border-gray-600 hover:bg-gray-100 transition-all duration-300"
-            >
-              ← Back
-            </button>
-            <BlockHeader block={selectedBlock.name} floor={selectedFloor} totalCapacity={totalCapacity} />
-            <FloorSelector 
-              floors={availableFloors}
-              selectedFloor={selectedFloor}
-              onFloorSelect={handleFloorChange}
-            />
-          </div>
-          {roomData && <RoomGrid rooms={roomData.rooms} />}
-        </div>
-      )}
-    </div>
+      <div className="min-h-screen bg-gradient-to-r from-green-100 to-blue-100">
+        {!selectedBlock ? (
+            <BlockSelectionPage onBlockSelect={handleBlockSelect} />
+        ) : (
+            <div className="container mx-auto px-4 py-4">
+              <div className="sticky top-0 p-4 mb-8 z-10">
+                <button
+                    onClick={handleBack}
+                    className="absolute left-4 top-4 px-4 py-2 rounded-full border-2 border-gray-600 hover:bg-gray-100 transition-all duration-300"
+                >
+                  ← Back
+                </button>
+                <BlockHeader block={selectedBlock.name} floor={selectedFloor} totalCapacity={totalCapacity} />
+                <FloorSelector
+                    floors={availableFloors}
+                    selectedFloor={selectedFloor}
+                    onFloorSelect={handleFloorChange}
+                />
+              </div>
+
+              {loading && (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="text-xl">Loading classroom data...</div>
+                  </div>
+              )}
+
+              {error && (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="text-xl text-red-500">{error}</div>
+                  </div>
+              )}
+
+              {!loading && !error && roomData && <RoomGrid rooms={roomData.rooms} />}
+            </div>
+        )}
+      </div>
   );
 }
 
