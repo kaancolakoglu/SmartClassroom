@@ -53,7 +53,10 @@ jobs:
               ProdDbUsername="${{ secrets.PROD_DB_USERNAME }}" \
               ProdDbPassword="${{ secrets.PROD_DB_PASSWORD }}" \
               AwsRegion="${{ secrets.AWS_REGION }}" \
-              AwsIotEndpoint="${{ secrets.AWS_IOT_ENDPOINT }}"
+              AwsIotEndpoint="${{ secrets.AWS_IOT_ENDPOINT }}" \
+              AwsIotClientId="${{ secrets.AWS_IOT_CLIENT_ID }}" \
+              AwsAccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+              AwsSecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
       # Get outputs from CloudFormation stack
       - name: Get CloudFormation outputs
