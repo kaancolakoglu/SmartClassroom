@@ -13,7 +13,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173") // Vite default port
+                        .allowedOrigins(
+                                "http://localhost:5173", // Keep for local development
+                                "http://smart-classroom-frontend.s3-website-us-east-1.amazonaws.com" // Add your S3 website
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

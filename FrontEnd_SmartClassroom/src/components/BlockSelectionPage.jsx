@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import './BlockSelectionPage.css';
 
 const BlockSelectionPage = ({ onBlockSelect }) => {
@@ -6,13 +6,13 @@ const BlockSelectionPage = ({ onBlockSelect }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = 'http://localhost:8080';
+  const API_BASE_URL = 'https://production.eba-nhxxj3xh.us-east-1.amazonaws.com';
 
   useEffect(() => {
     const fetchBlocks = async () => {
       try {
         // Blokları API'den çek
-        const response = await fetch(`${API_BASE_URL}/buildings`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/buildings/all`);
         if (!response.ok) {
           throw new Error('Blok verileri çekilemedi');
         }
