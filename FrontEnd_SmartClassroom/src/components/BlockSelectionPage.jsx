@@ -11,7 +11,9 @@ const BlockSelectionPage = ({ onBlockSelect }) => {
     const fetchBlocks = async () => {
       try {
         const data = await ApiService.getAllBuildings();
-        setBlocks(data);
+        // Blokları alfabetik olarak sırala
+        const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+        setBlocks(sortedData);
         setLoading(false);
       } catch (error) {
         console.error('Block data fetch error:', error);
@@ -25,38 +27,42 @@ const BlockSelectionPage = ({ onBlockSelect }) => {
 
   const blockColors = {
     'A': {
-      bg: 'from-purple-200 to-pink-200',
-      hover: 'hover:from-purple-300 hover:to-pink-300',
-      border: 'border-purple-300'
+      bg: 'bg-gradient-to-br from-[#ff5f6d] to-[#fca65c]', // Kırmızıdan turuncuya
+      hover: 'hover:from-[#ff6f7d] hover:to-[#fcb06b]',
+      border: 'border-[#ff8c6d]'
     },
     'B': {
-      bg: 'from-blue-200 to-cyan-200',
-      hover: 'hover:from-blue-300 hover:to-cyan-300',
-      border: 'border-blue-300'
+      bg: 'bg-gradient-to-br from-[#fca65c] to-[#fdd835]', // Turuncudan sarıya
+      hover: 'hover:from-[#fcb06b] hover:to-[#fde340]',
+      border: 'border-[#ffb347]'
     },
     'C': {
-      bg: 'from-emerald-200 to-teal-200',
-      hover: 'hover:from-emerald-300 hover:to-teal-300',
-      border: 'border-emerald-300'
+      bg: 'bg-gradient-to-br from-[#fdd835] to-[#aed581]', // Sarıdan açık yeşile
+      hover: 'hover:from-[#fde340] hover:to-[#b7e18d]',
+      border: 'border-[#cddc39]'
+    },
+    'G': {
+      bg: 'bg-gradient-to-br from-[#aed581] to-[#4fc3f7]', // Açık yeşilden açık maviye
+      hover: 'hover:from-[#b7e18d] hover:to-[#64bdf6]',
+      border: 'border-[#81c784]'
     },
     'H': {
-      bg: 'from-orange-200 to-amber-200',
-      hover: 'hover:from-orange-300 hover:to-amber-300',
-      border: 'border-orange-300'
+      bg: 'bg-gradient-to-br from-[#4fc3f7] to-[#9575cd]', // Açık maviden mora
+      hover: 'hover:from-[#64bdf6] hover:to-[#a784db]',
+      border: 'border-[#64b5f6]'
     },
     'I': {
-      bg: 'from-rose-200 to-red-200',
-      hover: 'hover:from-rose-300 hover:to-red-300',
-      border: 'border-rose-300'
+      bg: 'bg-gradient-to-br from-[#9575cd] to-[#d4e157]', // Mordan lime yeşiline (gökkuşağı sırasını tamamlamak için)
+      hover: 'hover:from-[#a784db] hover:to-[#dce775]',
+      border: 'border-[#7e57c2]'
     }
-    // Other blocks can be added here
   };
 
   // Default color
   const defaultColor = {
-    bg: 'from-gray-200 to-gray-300',
-    hover: 'hover:from-gray-300 hover:to-gray-400',
-    border: 'border-gray-300'
+    bg: 'from-neutral-100 to-neutral-200',
+    hover: 'hover:from-neutral-200 hover:to-neutral-300',
+    border: 'border-neutral-300'
   };
 
   // Get block color, use default if not found
