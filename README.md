@@ -1,5 +1,8 @@
 # Smart Classroom: Occupancy Monitoring System
 
+## Website
+http://smart-classroom-frontend.s3-website-us-east-1.amazonaws.com/
+
 ## Project Overview
 Smart Classroom is a solution designed to help students find available empty classrooms for study spaces when libraries are full. Using sensors and IoT technology, the system tracks classroom occupancy and displays this information on an accessible platform, redirecting students to available spaces.
 
