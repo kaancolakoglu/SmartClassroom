@@ -13,13 +13,18 @@ const RoomCard = ({ room }) => {
 
   return (
     <div 
-      className="rounded-full p-4 border-2 transition-all duration-300 hover:shadow-lg"
-      style={{ borderColor: getColorByOccupancy() }}
+      className="rounded-full p-3 border-2 transition-all duration-300 hover:shadow-lg backdrop-blur-sm flex flex-col justify-center"
+      style={{ 
+        borderColor: getColorByOccupancy(),
+        height: '100px', // Sabit yükseklik
+        minHeight: '100px',
+        backgroundColor: 'transparent'
+      }}
     >
       <div className="text-center">
-        <div className="text-xl font-bold mb-2">{room.id}</div>
-        <div className="text-lg mb-2">{room.name}</div>
-        <div className="text-sm">
+        {/* <div className="text-lg font-bold">{room.id}</div> */}
+        <div className="text-lg font-bold">{room.name}</div>
+        <div className="text-sm font-medium">
           {room.current}/{room.capacity}
         </div>
       </div>
