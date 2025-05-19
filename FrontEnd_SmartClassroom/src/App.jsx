@@ -104,12 +104,12 @@ function App() {
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-r from-green-100 to-blue-100">
+      <div className="min-h-screen bg-gradient-to-r from-green-100 to-blue-100 overflow-hidden">
         {!selectedBlock ? (
             <BlockSelectionPage onBlockSelect={handleBlockSelect} />
         ) : (
-            <div className="container mx-auto px-4 py-4">
-              <div className="sticky top-0 p-4 mb-8 z-10">
+            <div className="container mx-auto px-4 py-4 h-screen flex flex-col">
+              <div className="sticky top-0 p-4 mb-4 z-10 bg-gradient-to-r from-green-100 to-blue-100">
                 <button
                     onClick={handleBack}
                     className="absolute left-4 top-4 px-4 py-2 rounded-full border-2 border-gray-600 hover:bg-gray-100 transition-all duration-300"

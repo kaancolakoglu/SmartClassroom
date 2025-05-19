@@ -13,7 +13,7 @@ const FloorSelector = ({ floors, selectedFloor, onFloorSelect }) => {
   };
 
   return (
-    <div className="flex gap-2 justify-center mb-8 flex-wrap">
+    <div className="flex gap-2 justify-center -mb-2 flex-wrap">
       {floors.map((floor) => (
         <button
           key={floor}
