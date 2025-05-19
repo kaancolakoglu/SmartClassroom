@@ -23,7 +23,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 - **LED Lights**: For visual indicators and lighting
 
 ### Software & Cloud Infrastructure
-- **Frontend**: React.js for building the user interface
+- **Frontend**: Vite.js for building the user interface
 - **Backend**: Java Spring for server-side operations
 - **AWS Services**:
   - **AWS IoT Core**: For managing and communicating with IoT devices
@@ -34,7 +34,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 ## System Architecture
 ```
 ┌───────────────┐       ┌──────────────────┐       ┌─────────────────┐
-│  ESP32 with   │       │                  │       │  React.js Web   │
+│  ESP32 with   │       │                  │       │    Vite Web     │
 │ LD2410 Sensor ├──────►│  AWS IoT Core    ├──────►│    Dashboard    │
 └───────────────┘       │                  │       └─────────────────┘
                         │  AWS RDS         │
