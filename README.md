@@ -10,15 +10,12 @@ Smart Classroom is a solution designed to help students find available empty cla
 - **Real-time Occupancy Detection**: Uses LD2410 sensors to detect and count people in classrooms
 - **Web-based Dashboard**: Shows classroom availability status for students
 - **Automatic Lighting Control**: Energy-saving feature that turns lights on/off based on room occupancy
-- **Security Monitoring**: Periodic camera snapshots for safety and monitoring purposes
 
 ## Technology Stack
 
 ### Hardware Components
 - **LD2410 Sensor**: Motion and presence detection for counting occupants
 - **ESP32**: Main microcontroller for processing sensor data and wireless communication
-- **ESP32 Cam**: For periodic security snapshots
-- **Relay Module**: For controlling classroom lighting
 - **Lifepo4 Battery**: Provides reliable power supply
 - **LED Lights**: For visual indicators and lighting
 
@@ -28,8 +25,6 @@ Smart Classroom is a solution designed to help students find available empty cla
 - **AWS Services**:
   - **AWS IoT Core**: For managing and communicating with IoT devices
   - **AWS RDS**: For storing and managing occupancy data
-  - **Lambda**: For serverless computing functions
-  - **API Gateway**: For creating and managing APIs
 
 ## System Architecture
 ```
