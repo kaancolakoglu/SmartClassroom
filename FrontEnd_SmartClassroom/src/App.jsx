@@ -21,25 +21,19 @@ function App() {
     setSelectedBlock({id: blockId, name: blockName});
 
     try {
-      // Fetch classrooms for the selected block using the API service
       const data = await ApiService.getClassroomsByBuildingId(blockName);
 
-      // Extract available floors
       const floors = [...new Set(data.map(room => room.floorNumber))].sort();
       setAvailableFloors(floors);
 
-      // Select first floor
       const firstFloor = floors.length > 0 ? floors[0] : 0;
       setSelectedFloor(firstFloor);
 
-      // Filter rooms for the selected floor
       const roomsForFloor = data.filter(room => room.floorNumber === firstFloor);
 
-      // Calculate total capacity
       const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
       setTotalCapacity(totalCap);
 
-      // Set room data
       setRoomData({
         floors: floors,
         rooms: roomsForFloor.map(room => ({
@@ -67,14 +61,11 @@ function App() {
       try {
         const data = await ApiService.getClassroomsByBuildingId(selectedBlock.name);
 
-        // Filter rooms for the selected floor
         const roomsForFloor = data.filter(room => room.floorNumber === floor);
 
-        // Calculate total capacity
         const totalCap = roomsForFloor.reduce((sum, room) => sum + room.classroomCapacity, 0);
         setTotalCapacity(totalCap);
 
-        // Set room data
         setRoomData({
           floors: availableFloors,
           rooms: roomsForFloor.map(room => ({

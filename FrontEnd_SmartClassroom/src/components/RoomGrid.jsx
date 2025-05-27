@@ -7,9 +7,7 @@ const RoomGrid = ({ rooms }) => {
     return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
   };
 
-  // Odaları isimlerine göre sıralama
   const sortedRooms = [...rooms].sort((a, b) => {
-    // Sayısal sıralama için oda isimlerinden sayıları çıkarma
     const numA = parseInt(a.name.replace(/\D/g, ''));
     const numB = parseInt(b.name.replace(/\D/g, ''));
     return numA - numB;
@@ -21,7 +19,7 @@ const RoomGrid = ({ rooms }) => {
       style={{ 
         scrollbarWidth: 'thin',
         scrollbarColor: '#4CAF50 transparent',
-        gridAutoRows: '100px', // Sabit satır yüksekliği
+        gridAutoRows: '100px',
       }}
     >
       {sortedRooms.map(room => (
