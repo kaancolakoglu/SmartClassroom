@@ -7,14 +7,14 @@ http://smart-classroom-frontend.s3-website-us-east-1.amazonaws.com/
 Smart Classroom is a solution designed to help students find available empty classrooms for study spaces when libraries are full. Using sensors and IoT technology, the system tracks classroom occupancy and displays this information on an accessible platform, redirecting students to available spaces.
 
 ## Features
-- **Real-time Occupancy Detection**: Uses LD2410 sensors to detect and count people in classrooms
+- **Real-time Occupancy Detection**: Uses HCSR04 sensors to detect and count people in classrooms
 - **Web-based Dashboard**: Shows classroom availability status for students
 - **Automatic Lighting Control**: Energy-saving feature that turns lights on/off based on room occupancy
 
 ## Technology Stack
 
 ### Hardware Components
-- **LD2410 Sensor**: Motion and presence detection for counting occupants
+- **HCSR04 Sensor**: Motion and presence detection for counting occupants
 - **ESP32**: Main microcontroller for processing sensor data and wireless communication
 - **Lifepo4 Battery**: Provides reliable power supply
 - **LED Lights**: For visual indicators and lighting
@@ -30,7 +30,7 @@ Smart Classroom is a solution designed to help students find available empty cla
 ```
 ┌───────────────┐       ┌──────────────────┐       ┌─────────────────┐
 │  ESP32 with   │       │                  │       │    Vite Web     │
-│ LD2410 Sensor ├──────►│  AWS IoT Core    ├──────►│    Dashboard    │
+│ HCSR04 Sensor ├──────►│  AWS IoT Core    ├──────►│    Dashboard    │
 └───────────────┘       │                  │       └─────────────────┘
                         │  AWS RDS         │
 ┌───────────────┐       │                  │       ┌─────────────────┐
@@ -49,10 +49,10 @@ Smart Classroom is a solution designed to help students find available empty cla
   - ESP32 Board Support Package
   - WiFi library
   - PubSubClient for MQTT
-  - LD2410 sensor libraries
+  - HCSR04 sensor libraries
 
 ### Hardware Setup
-- Connect the LD2410 sensor to ESP32 according to pinout specifications
+- Connect the HCSR04 sensor to ESP32 according to pinout specifications
 - Connect relay module to ESP32 for lighting control
 - Ensure proper power supply connection for all components
 
